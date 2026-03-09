@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스페란자 순환 컨텐츠 흐름도 - Arc Raiders</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+    :root {
+      --bg-deep: #06080f;
+      --bg-card: #0c1120;
+      --bg-card2: #111827;
+      --border: #1e2d45;
+      --cyan: #00d4ff;
+      --cyan-dim: #0090b8;
+      --orange: #ff6b00;
+      --orange-dim: #b84d00;
+      --green: #00e676;
+      --green-dim: #00a052;
+      --purple: #b06bff;
+      --purple-dim: #6e3da8;
+      --gold: #ffd54f;
+      --red: #ff5252;
+      --pink: #ff69b4;
+      --text: #c8d8e8;
+      --text-dim: #6a7f96;
+      --text-bright: #e8f4ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: relative;
+      text-align: center;
+      padding: 40px 20px 30px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #0a1628 0%, var(--bg-deep) 100%);
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse 60% 100% at 50% 0%, rgba(0,212,255,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      letter-spacing: 2px;
+    }
+    header h1 span {
+      color: var(--cyan);
+    }
+    .header-sub {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    /* ─── SECTION WRAPPER ─── */
+    .section-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      opacity: 0.6;
+      padding: 40px 0 16px;
+    }
+
+    /* ─── MAIN LOOP DIAGRAM ─── */
+    #main-loop {
+      padding: 32px 24px 0;
+    }
+    .loop-diagram {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 1352px;
+      margin: 0 auto;
+    }
+    .loop-diagram::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(0,212,255,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .loop-svg-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .loop-svg-wrap svg {
+      display: block;
+      min-width: 900px;
+    }
+
+    /* ─── 7 SECTION CARDS ─── */
+    #sections {
+      padding: 0 24px 40px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: 1352px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .card.c-play::before   { background: var(--cyan); }
+    .card.c-work::before   { background: var(--green); }
+    .card.c-raider::before { background: var(--purple); }
+    .card.c-trader::before { background: var(--gold); }
+    .card.c-deck::before   { background: var(--orange); }
+    .card.c-shop::before   { background: var(--pink); }
+    .card.c-inv::before    { background: var(--text-dim); }
+    .card.c-inbox::before      { background: var(--cyan-dim); }
+    .card.c-expedition::before { background: var(--gold); }
+
+    .card:hover.c-play   { border-color: var(--cyan-dim); }
+    .card:hover.c-work   { border-color: var(--green-dim); }
+    .card:hover.c-raider { border-color: var(--purple-dim); }
+    .card:hover.c-trader { border-color: #a08000; }
+    .card:hover.c-deck   { border-color: var(--orange-dim); }
+    .card:hover.c-shop   { border-color: #aa3070; }
+    .card:hover.c-inv    { border-color: #3a4f60; }
+    .card:hover.c-inbox      { border-color: var(--cyan); }
+    .card:hover.c-expedition { border-color: var(--gold); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .c-play   .card-icon { background: rgba(0,212,255,0.12); }
+    .c-work   .card-icon { background: rgba(0,230,118,0.12); }
+    .c-raider .card-icon { background: rgba(176,107,255,0.12); }
+    .c-trader .card-icon { background: rgba(255,213,79,0.12); }
+    .c-deck   .card-icon { background: rgba(255,107,0,0.12); }
+    .c-shop   .card-icon { background: rgba(255,105,180,0.12); }
+    .c-inv    .card-icon { background: rgba(100,130,160,0.12); }
+    .c-inbox      .card-icon { background: rgba(0,144,184,0.12); }
+    .c-expedition .card-icon { background: rgba(255,213,79,0.12); }
+
+    .card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-bright);
+    }
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
+      word-break: keep-all;
+    }
+
+    .sub-list { list-style: none; }
+    .sub-list li {
+      font-size: 12.5px;
+      color: var(--text);
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(30,45,69,0.5);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    .sub-list li:last-child { border-bottom: none; }
+    .sub-list li::before {
+      content: '▸';
+      font-size: 9px;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .c-play   .sub-list li::before { color: var(--cyan); }
+    .c-work   .sub-list li::before { color: var(--green); }
+    .c-raider .sub-list li::before { color: var(--purple); }
+    .c-trader .sub-list li::before { color: var(--gold); }
+    .c-deck   .sub-list li::before { color: var(--orange); }
+    .c-shop   .sub-list li::before { color: var(--pink); }
+    .c-inv    .sub-list li::before { color: var(--text-dim); }
+    .c-inbox      .sub-list li::before { color: var(--cyan-dim); }
+    .c-expedition .sub-list li::before { color: var(--gold); }
+
+    .sub-list li strong {
+      color: var(--text-bright);
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .badge-cyan   { background: rgba(0,212,255,0.15); color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+    .badge-gold   { background: rgba(255,213,79,0.15); color: var(--gold); border: 1px solid rgba(255,213,79,0.3); }
+    .badge-green  { background: rgba(0,230,118,0.15); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+    .badge-purple { background: rgba(176,107,255,0.15); color: var(--purple); border: 1px solid rgba(176,107,255,0.3); }
+    .badge-orange { background: rgba(255,107,0,0.15); color: var(--orange); border: 1px solid rgba(255,107,0,0.3); }
+    .badge-pink   { background: rgba(255,105,180,0.15); color: var(--pink); border: 1px solid rgba(255,105,180,0.3); }
+
+    /* ─── RESOURCE FLOW ─── */
+    #resources {
+      padding: 0 24px 60px;
+    }
+    .res-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      max-width: 1352px;
+      margin: 0 auto;
+    }
+    .res-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .res-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .res-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .res-row {
+      font-size: 12px;
+      color: var(--text-dim);
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .res-row span { color: var(--text); }
+    .arrow-small { color: var(--text-dim); font-size: 10px; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-label">아크 레이더스 · 아웃게임 컨텐츠</div>
+  <h1>스페란자 <span>순환 컨텐츠</span> 흐름도</h1>
+  <p class="header-sub">스페란자 허브 — 지하 거점의 모든 활동 구조</p>
+</header>
+
+<!-- ─── MAIN LOOP DIAGRAM ─── -->
+<div class="section-wrap">
+  <div class="section-title">▸ 메인 순환 루프</div>
+</div>
+<div id="main-loop">
+  <div class="loop-diagram">
+    <div class="loop-svg-wrap">
+      <svg viewBox="0 0 1500 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <defs>
+          <!-- Arrow markers -->
+          <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00d4ff"/>
+          </marker>
+          <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ff6b00"/>
+          </marker>
+          <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00e676"/>
+          </marker>
+          <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#b06bff"/>
+          </marker>
+          <marker id="arrow-gold" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ffd54f"/>
+          </marker>
+          <marker id="arrow-dim" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#3a5a70"/>
+          </marker>
+          <!-- Glow filter -->
+          <filter id="glow-cyan">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <filter id="glow-orange">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <!-- ClipPaths for each box (top row) -->
+          <clipPath id="clip-t1"><rect x="32"   y="62"  width="176" height="76"/></clipPath>
+          <clipPath id="clip-t2"><rect x="272"  y="62"  width="176" height="76"/></clipPath>
+          <clipPath id="clip-t3"><rect x="512"  y="42"  width="276" height="96"/></clipPath>
+          <clipPath id="clip-t4"><rect x="842"  y="62"  width="176" height="76"/></clipPath>
+          <clipPath id="clip-t5"><rect x="1072" y="62"  width="196" height="76"/></clipPath>
+          <!-- ClipPaths for each box (bottom row) -->
+          <clipPath id="clip-b1"><rect x="32"   y="222" width="196" height="136"/></clipPath>
+          <clipPath id="clip-b2"><rect x="272"  y="222" width="196" height="136"/></clipPath>
+          <clipPath id="clip-b3"><rect x="512"  y="222" width="196" height="136"/></clipPath>
+          <clipPath id="clip-b4"><rect x="752"  y="222" width="196" height="136"/></clipPath>
+          <clipPath id="clip-b5"><rect x="992"  y="222" width="176" height="136"/></clipPath>
+          <clipPath id="clip-b6"><rect x="1202" y="222" width="176" height="136"/></clipPath>
+        </defs>
+
+        <!-- Background grid lines (subtle) -->
+        <g opacity="0.04" stroke="#00d4ff" stroke-width="1">
+          <line x1="0" y1="100" x2="1500" y2="100"/>
+          <line x1="0" y1="200" x2="1500" y2="200"/>
+          <line x1="0" y1="300" x2="1500" y2="300"/>
+          <line x1="0" y1="400" x2="1500" y2="400"/>
+          <line x1="150" y1="0" x2="150" y2="520"/>
+          <line x1="350" y1="0" x2="350" y2="520"/>
+          <line x1="550" y1="0" x2="550" y2="520"/>
+          <line x1="750" y1="0" x2="750" y2="520"/>
+          <line x1="950" y1="0" x2="950" y2="520"/>
+          <line x1="1150" y1="0" x2="1150" y2="520"/>
+          <line x1="1350" y1="0" x2="1350" y2="520"/>
+        </g>
+
+        <!-- ─── TOP ROW NODES ─── -->
+
+        <!-- [1] 플레이 / 출격 준비 -->
+        <rect x="30" y="60" width="180" height="80" rx="10" fill="#0c1a2e" stroke="#00d4ff" stroke-width="1.5"/>
+        <rect x="30" y="60" width="180" height="4" rx="2" fill="#00d4ff"/>
+        <g clip-path="url(#clip-t1)">
+          <text x="120" y="95" text-anchor="middle" fill="#00d4ff" font-family="Rajdhani,sans-serif" font-size="16" font-weight="700" letter-spacing="1">플레이</text>
+          <text x="120" y="111" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">출격 / 맵 선택 / 스쿼드 구성</text>
+          <text x="120" y="125" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">퀘스트 · 피트 확인</text>
+        </g>
+
+        <!-- Arrow 1→2 -->
+        <line x1="212" y1="100" x2="268" y2="100" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+
+        <!-- [2] 맵 탐사 -->
+        <rect x="270" y="60" width="180" height="80" rx="10" fill="#0c1a2e" stroke="#00d4ff" stroke-width="1.5"/>
+        <rect x="270" y="60" width="180" height="4" rx="2" fill="#00d4ff"/>
+        <g clip-path="url(#clip-t2)">
+          <text x="360" y="93" text-anchor="middle" fill="#00d4ff" font-family="Rajdhani,sans-serif" font-size="16" font-weight="700" letter-spacing="1">맵 탐사</text>
+          <text x="360" y="109" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">맵 선택 — 전투 / 루팅</text>
+          <text x="360" y="123" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">경험치 · 평판 점수 · 피트 달성</text>
+        </g>
+
+        <!-- Arrow 2→3 -->
+        <line x1="452" y1="100" x2="508" y2="100" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+
+        <!-- [3] 스페란자 귀환 (CENTER) -->
+        <rect x="510" y="40" width="280" height="100" rx="12" fill="#091220" stroke="#00d4ff" stroke-width="2"/>
+        <rect x="510" y="40" width="280" height="5" rx="2.5" fill="#00d4ff"/>
+        <!-- glow effect -->
+        <rect x="510" y="40" width="280" height="100" rx="12" fill="none" stroke="#00d4ff" stroke-width="6" opacity="0.06"/>
+        <g clip-path="url(#clip-t3)">
+          <text x="650" y="80" text-anchor="middle" fill="#e8f4ff" font-family="Rajdhani,sans-serif" font-size="20" font-weight="700" letter-spacing="2">스페란자 귀환</text>
+          <text x="650" y="100" text-anchor="middle" fill="#00d4ff" font-family="Noto Sans KR,sans-serif" font-size="10" opacity="0.8">아이템 · 재료 · 코인 · 평판 점수 반입</text>
+          <text x="650" y="118" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">설계도 · 퀘스트 진행물 정리</text>
+        </g>
+
+        <!-- Arrow 3→4 (right from center) -->
+        <line x1="792" y1="100" x2="838" y2="100" stroke="#6a7f96" stroke-width="1.5" marker-end="url(#arrow-dim)"/>
+
+        <!-- [4] 인벤토리 -->
+        <rect x="840" y="60" width="180" height="80" rx="10" fill="#0c1a2e" stroke="#3a5a70" stroke-width="1.5"/>
+        <rect x="840" y="60" width="180" height="4" rx="2" fill="#4a7090"/>
+        <g clip-path="url(#clip-t4)">
+          <text x="930" y="97" text-anchor="middle" fill="#8aafc0" font-family="Rajdhani,sans-serif" font-size="16" font-weight="700" letter-spacing="1">인벤토리</text>
+          <text x="930" y="115" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">아이템 정리 / 스택 병합</text>
+        </g>
+
+        <!-- Arrow 4→5 -->
+        <line x1="1022" y1="100" x2="1068" y2="100" stroke="#3a5a70" stroke-width="1.5" marker-end="url(#arrow-dim)"/>
+
+        <!-- [5] 원정 -->
+        <rect x="1070" y="60" width="200" height="80" rx="10" fill="#0c1a2e" stroke="#ffd54f" stroke-width="1.5"/>
+        <rect x="1070" y="60" width="200" height="4" rx="2" fill="#ffd54f"/>
+        <g clip-path="url(#clip-t5)">
+          <text x="1170" y="84" text-anchor="middle" fill="#ffd54f" font-family="Noto Sans KR,sans-serif" font-size="14" font-weight="700" letter-spacing="1">원정</text>
+          <text x="1170" y="99" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">8주 사이클 · 출발 여부 선택</text>
+          <text x="1170" y="113" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">유지: 코스메틱 · 레이더 토큰 · 덱</text>
+          <text x="1170" y="127" text-anchor="middle" fill="#ffd54f" font-family="Noto Sans KR,sans-serif" font-size="9" opacity="0.9">초기화: 창고 · 레벨 · 설계도</text>
+        </g>
+
+        <!-- ─── DOWN ARROWS from귀환 to bottom row ─── -->
+
+        <!-- 귀환 → 상인 -->
+        <line x1="590" y1="142" x2="590" y2="218" stroke="#ffd54f" stroke-width="1.5" marker-end="url(#arrow-gold)"/>
+        <!-- 귀환 → 작업장 -->
+        <line x1="650" y1="142" x2="650" y2="218" stroke="#00e676" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+        <!-- 귀환 → 레이더 -->
+        <line x1="710" y1="142" x2="710" y2="218" stroke="#b06bff" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+
+        <!-- ─── BOTTOM ROW NODES ─── -->
+
+        <!-- [B1] 상인 -->
+        <rect x="30" y="220" width="200" height="140" rx="10" fill="#0c1a2e" stroke="#ffd54f" stroke-width="1.5"/>
+        <rect x="30" y="220" width="200" height="4" rx="2" fill="#ffd54f"/>
+        <g clip-path="url(#clip-b1)">
+          <text x="130" y="251" text-anchor="middle" fill="#ffd54f" font-family="Noto Sans KR,sans-serif" font-size="15" font-weight="700" letter-spacing="1">상인</text>
+          <text x="130" y="267" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">5명의 전문 상인 NPC</text>
+          <line x1="46" y1="276" x2="222" y2="276" stroke="#1e2d45" stroke-width="1"/>
+          <text x="46" y="291" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">셀레스테 — 씨앗/재료 거래</text>
+          <text x="46" y="306" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">티안 원 — 무기/탄약</text>
+          <text x="46" y="321" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">랜스 — 의료/증강</text>
+          <text x="46" y="336" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">아폴로 — 가젯/수류탄</text>
+          <text x="46" y="351" fill="#ffd54f" font-family="Noto Sans KR,sans-serif" font-size="9">→ 퀘스트 64개+ 제공</text>
+        </g>
+
+        <!-- Arrow B1→B2 -->
+        <line x1="232" y1="282" x2="268" y2="282" stroke="#ffd54f" stroke-width="1.5" marker-end="url(#arrow-gold)"/>
+
+        <!-- [B2] 작업장 -->
+        <rect x="270" y="220" width="200" height="140" rx="10" fill="#0c1a2e" stroke="#00e676" stroke-width="1.5"/>
+        <rect x="270" y="220" width="200" height="4" rx="2" fill="#00e676"/>
+        <g clip-path="url(#clip-b2)">
+          <text x="370" y="251" text-anchor="middle" fill="#00e676" font-family="Noto Sans KR,sans-serif" font-size="14" font-weight="700" letter-spacing="1">작업장</text>
+          <text x="370" y="266" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">재료 + 설계도 → 아이템 제작</text>
+          <line x1="286" y1="275" x2="462" y2="275" stroke="#1e2d45" stroke-width="1"/>
+          <text x="286" y="290" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">작업대 — 무기/탄약</text>
+          <text x="286" y="305" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">총기 제작대 — 고급 무기/부착물</text>
+          <text x="286" y="320" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">장비 작업대 — 증강물 제작</text>
+          <text x="286" y="335" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">의약품 연구대 — 치유 아이템</text>
+          <text x="286" y="350" fill="#00e676" font-family="Noto Sans KR,sans-serif" font-size="9">가공기 — 재료 정제 (꼬꼬)</text>
+        </g>
+
+        <!-- Arrow B2→B3 -->
+        <line x1="472" y1="282" x2="508" y2="282" stroke="#00e676" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+        <!-- [B3] 레이더 -->
+        <rect x="510" y="220" width="200" height="140" rx="10" fill="#0c1a2e" stroke="#b06bff" stroke-width="1.5"/>
+        <rect x="510" y="220" width="200" height="4" rx="2" fill="#b06bff"/>
+        <g clip-path="url(#clip-b3)">
+          <text x="610" y="251" text-anchor="middle" fill="#b06bff" font-family="Noto Sans KR,sans-serif" font-size="15" font-weight="700" letter-spacing="1">레이더</text>
+          <text x="610" y="267" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">캐릭터 성장 &amp; 개인화</text>
+          <line x1="526" y1="276" x2="702" y2="276" stroke="#1e2d45" stroke-width="1"/>
+          <text x="526" y="291" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">스킬 트리 3분기 (45 스킬)</text>
+          <text x="526" y="306" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">레이더 덴 — 개인 공간</text>
+          <text x="526" y="321" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">시련 / 프로젝트</text>
+          <text x="526" y="336" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">코덱스 — 기록 / 통계</text>
+          <text x="526" y="351" fill="#b06bff" font-family="Noto Sans KR,sans-serif" font-size="9">의상 커스터마이징</text>
+        </g>
+
+        <!-- Arrow B3→B4 -->
+        <line x1="712" y1="282" x2="748" y2="282" stroke="#b06bff" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+
+        <!-- [B4] 덱 -->
+        <rect x="750" y="220" width="200" height="140" rx="10" fill="#0c1a2e" stroke="#ff6b00" stroke-width="1.5"/>
+        <rect x="750" y="220" width="200" height="4" rx="2" fill="#ff6b00"/>
+        <g clip-path="url(#clip-b4)">
+          <text x="850" y="251" text-anchor="middle" fill="#ff6b00" font-family="Noto Sans KR,sans-serif" font-size="15" font-weight="700" letter-spacing="1">덱</text>
+          <text x="850" y="266" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">평판 점수 → 보상 해금 (배틀패스형)</text>
+          <line x1="766" y1="275" x2="942" y2="275" stroke="#1e2d45" stroke-width="1"/>
+          <text x="766" y="290" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">무료 덱 — 게임플레이 아이템</text>
+          <text x="766" y="305" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">프리미엄 덱 — 코스메틱</text>
+          <text x="766" y="320" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">평판 점수 소프트 캡: 800</text>
+          <text x="766" y="335" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">일일 피트 → 평판 점수 획득</text>
+          <text x="766" y="350" fill="#ff6b00" font-family="Noto Sans KR,sans-serif" font-size="9">레이더 토큰 포함 보상</text>
+        </g>
+
+        <!-- Arrow B4→B5 -->
+        <line x1="952" y1="282" x2="988" y2="282" stroke="#ff6b00" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+
+        <!-- [B5] 상점 -->
+
+        <rect x="990" y="220" width="180" height="140" rx="10" fill="#0c1a2e" stroke="#ff69b4" stroke-width="1.5"/>
+        <rect x="990" y="220" width="180" height="4" rx="2" fill="#ff69b4"/>
+        <g clip-path="url(#clip-b5)">
+          <text x="1080" y="251" text-anchor="middle" fill="#ff69b4" font-family="Noto Sans KR,sans-serif" font-size="15" font-weight="700" letter-spacing="1">상점</text>
+          <text x="1080" y="266" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">레이더 토큰 코스메틱 상점</text>
+          <line x1="1006" y1="275" x2="1162" y2="275" stroke="#1e2d45" stroke-width="1"/>
+          <text x="1006" y="290" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">의상 번들 (세트 단위)</text>
+          <text x="1006" y="305" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">프리미엄 레이더 덱</text>
+          <text x="1006" y="320" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">에모트 / 백팩 / 참</text>
+          <text x="1006" y="335" fill="#ff69b4" font-family="Noto Sans KR,sans-serif" font-size="9">1,000 토큰 ≈ $10</text>
+        </g>
+
+        <!-- Arrow B5→B6 -->
+        <line x1="1172" y1="282" x2="1198" y2="282" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrow-cyan)"/>
+
+        <!-- [B6] 우편함 -->
+        <rect x="1200" y="220" width="180" height="140" rx="10" fill="#0c1a2e" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <rect x="1200" y="220" width="180" height="4" rx="2" fill="#00d4ff" opacity="0.6"/>
+        <g clip-path="url(#clip-b6)">
+          <text x="1290" y="251" text-anchor="middle" fill="#00d4ff" font-family="Noto Sans KR,sans-serif" font-size="14" font-weight="700" letter-spacing="1">우편함</text>
+          <text x="1290" y="266" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">이벤트/개발사 보상 수령</text>
+          <line x1="1216" y1="275" x2="1372" y2="275" stroke="#1e2d45" stroke-width="1"/>
+          <text x="1216" y="290" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">레이더 토큰 (이벤트 증정)</text>
+          <text x="1216" y="305" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">코스메틱 아이템 (기념 보상)</text>
+          <text x="1216" y="320" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">설계도 · 게임플레이 보상</text>
+          <text x="1216" y="335" fill="#c8d8e8" font-family="Noto Sans KR,sans-serif" font-size="9">커뮤니티 프로젝트 보상</text>
+          <text x="1216" y="350" fill="#00d4ff" font-family="Noto Sans KR,sans-serif" font-size="9" opacity="0.7">* 수령 후 인벤토리로 이동</text>
+        </g>
+
+
+        <!-- ─── RETURN ARROWS (bottom→top) ─── -->
+
+        <!-- 상인 퀘스트 보상 → 레벨업 → 플레이 -->
+        <!-- 상인 bottom → down → left turn → up → 플레이 -->
+        <path d="M 130 358 L 130 415 L 120 415 L 120 475 L 1250 475 L 1250 415 L 1170 415 L 1170 142"
+              stroke="#1e2d45" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arrow-dim)"/>
+
+        <!-- 상인 → 플레이 (퀘스트 경험치) short label -->
+        <text x="650" y="466" text-anchor="middle" fill="#3a5a70" font-family="Noto Sans KR,sans-serif" font-size="9">퀘스트 보상 · 경험치 → 레벨업 → 스킬 포인트 · 평판 점수 → 다음 출격</text>
+
+        <!-- 작업장 → 인벤토리 (제작 완료) -->
+        <path d="M 370 358 L 370 395 L 930 395 L 930 142"
+              stroke="#00e676" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arrow-green)"/>
+        <text x="660" y="390" text-anchor="middle" fill="#00a052" font-family="Noto Sans KR,sans-serif" font-size="9">제작 완료 아이템 → 인벤토리 → 다음 출격에 사용</text>
+
+        <!-- 덱 → 레이더 (보상 코스메틱 적용) -->
+        <path d="M 850 358 L 850 432 L 610 432 L 610 358"
+              stroke="#b06bff" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arrow-purple)"/>
+        <text x="730" y="445" text-anchor="middle" fill="#6e3da8" font-family="Noto Sans KR,sans-serif" font-size="9">덱 보상 → 커스터마이징 적용</text>
+
+        <!-- 원정 출발 → 새 레이더 시작 (플레이로 복귀) -->
+        <path d="M 1170 60 L 1170 18 L 120 18 L 120 60" stroke="#ffd54f" stroke-width="1.2" fill="none" stroke-dasharray="4,3" opacity="0.5" marker-end="url(#arrow-gold)"/>
+        <text x="650" y="13" text-anchor="middle" fill="#a08000" font-family="Noto Sans KR,sans-serif" font-size="8" opacity="0.8">새 레이더 시작 (출발 선택 시 전체 초기화 · 스킬 포인트 최대 5개 이월)</text>
+
+        <!-- ─── LABELS ─── -->
+        <!-- Top: 맵 탐사 결과 레이블 -->
+        <text x="360" y="38" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9">루팅한 아이템 · 재료 · 설계도</text>
+        <text x="360" y="50" text-anchor="middle" fill="#00d4ff" font-family="Noto Sans KR,sans-serif" font-size="9" opacity="0.6">↓ 전부 인벤토리로</text>
+
+        <!-- Arrow labels -->
+        <text x="250" y="95" text-anchor="middle" fill="#00d4ff" font-family="Noto Sans KR,sans-serif" font-size="9" opacity="0.7">출격</text>
+        <text x="490" y="95" text-anchor="middle" fill="#00d4ff" font-family="Noto Sans KR,sans-serif" font-size="9" opacity="0.7">귀환</text>
+        <text x="820" y="95" text-anchor="middle" fill="#6a7f96" font-family="Noto Sans KR,sans-serif" font-size="9" opacity="0.7">정리</text>
+        <text x="1055" y="95" text-anchor="middle" fill="#ffd54f" font-family="Noto Sans KR,sans-serif" font-size="9" opacity="0.7">목표</text>
+
+        <!-- Bottom row connecting labels (위로 올려 화살표와 분리) -->
+        <rect x="233" y="263" width="34" height="13" rx="3" fill="#06080f" opacity="0.85"/>
+        <text x="250" y="273" text-anchor="middle" fill="#ffd54f" font-family="Noto Sans KR,sans-serif" font-size="9" font-weight="600">코인</text>
+
+        <rect x="478" y="263" width="26" height="13" rx="3" fill="#06080f" opacity="0.85"/>
+        <text x="491" y="273" text-anchor="middle" fill="#00e676" font-family="Noto Sans KR,sans-serif" font-size="9" font-weight="600">재료</text>
+
+        <rect x="714" y="263" width="34" height="13" rx="3" fill="#06080f" opacity="0.85"/>
+        <text x="731" y="273" text-anchor="middle" fill="#b06bff" font-family="Noto Sans KR,sans-serif" font-size="9" font-weight="600">경험치</text>
+
+        <rect x="954" y="263" width="34" height="13" rx="3" fill="#06080f" opacity="0.85"/>
+        <text x="971" y="273" text-anchor="middle" fill="#ff6b00" font-family="Noto Sans KR,sans-serif" font-size="9" font-weight="600">평판 점수</text>
+
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SECTION DETAIL CARDS ─── -->
+<div class="section-wrap">
+  <div class="section-title">▸ 메뉴별 세부 항목</div>
+</div>
+<div id="sections">
+  <div class="cards-grid">
+
+    <!-- 플레이 -->
+    <div class="card c-play">
+      <div class="card-header">
+        <div class="card-icon">▶</div>
+        <div>
+          <div class="card-title">플레이</div>
+          <div class="card-subtitle">지표면 출격 — 핵심 게임플레이</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>맵 선택</strong> <span class="badge badge-cyan">5개 전투 맵</span><br>댐 전장 · 파묻힌 도시 · 우주 기지 · 블루 게이트 · 스텔라 몬티스</li>
+        <li><strong>스텔라 몬티스</strong> <span class="badge badge-purple">실내 시설</span><br>지하 산악 연구시설 · 전 맵 최고 설계도 드롭률<br>고난이도 — ARC 신형 적 (슈레더·마트리아크) 등장</li>
+        <li><strong>훈련장</strong> <span class="badge badge-cyan">비전투 구역</span><br>무기·장비·가젯 테스트 전용 · 사망·내구도 손실 없음<br>4회 탐사 완료 후 해금 · 세션당 51분 제한</li>
+        <li><strong>스쿼드 구성</strong><br>솔로 · 3인 스쿼드 · 분대 자동 채우기</li>
+        <li><strong>단독 대 분대</strong> <span class="badge badge-cyan">Lv.40+</span><br>솔로로 3인 스쿼드와 대결 — 높은 보상</li>
+        <li><strong>피트</strong><br>일일 달성 목표 — 평판 점수 획득 수단</li>
+        <li><strong>진행중인 퀘스트</strong><br>현재 수락된 상인 퀘스트 목록 표시<br>목표 아이템 · 처치 수 · 위치 등 추적</li>
+      </ul>
+    </div>
+
+    <!-- 작업장 -->
+    <div class="card c-work">
+      <div class="card-header">
+        <div class="card-icon">⚙</div>
+        <div>
+          <div class="card-title">작업장</div>
+          <div class="card-subtitle">작업장 — 아이템 제작 시설</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>작업대</strong> <span class="badge badge-green">레벨 고정</span><br>탄약 · 기초 장비 · 실드 · 의료 소모품 (업그레이드 없음)</li>
+        <li><strong>총기 제작대</strong> <span class="badge badge-green">최대 Lv.3</span><br>무기 제작 + 무기 강화 최대 +4단계 (반동·명중·취급 개선)<br>Lv.2: 중급 무기 해금 · Lv.3: 고급 무기 해금</li>
+        <li><strong>장비 작업대</strong> <span class="badge badge-green">최대 Lv.3</span><br>Lv.1: 실드 · Mk.1 증강물<br>Lv.2: 중급 실드 · Mk.2 증강물<br>Lv.3: Mk.3 전문화 증강물 (전투/루팅/전술)</li>
+        <li><strong>의약품 연구대</strong> <span class="badge badge-green">최대 Lv.3</span><br>Lv.2: 고급 붕대 · 실드 재충전 업그레이드<br>Lv.3: 비타 스프레이 · 비타 샷 해금</li>
+        <li><strong>폭발물 스테이션</strong> <span class="badge badge-green">최대 Lv.3</span><br>Lv.2: 화염 · 파편 · 스냅 폭발 수류탄<br>Lv.3: 중형 퓨즈 수류탄 · 폭발 지뢰 · 울프팩</li>
+        <li><strong>유틸리티 스테이션</strong> <span class="badge badge-green">최대 Lv.3</span><br>Lv.2: 유인 수류탄 · 해치 키 · 집라인<br>Lv.3: 광전 클로크 · 스냅 훅 · 태그 수류탄</li>
+        <li><strong>가공기</strong> <span class="badge badge-green">최대 Lv.3</span><br>Lv.2: 고급 전기/기계 부품 · 탄약 부품 정제<br>Lv.3: 자기 가속기 · 파워 로드 · 복합 총기 부품</li>
+        <li><strong>꼬꼬</strong> <span class="badge badge-green">최대 Lv.5</span><br>탐사 중 기초 재료 6종 자동 수집 (각 최대 50개)<br>Lv.5: 6분 이상 체류 시 자원 최대 8개 획득</li>
+        <li><strong>설계도</strong> — 제작 해금 · 탐사 루트/퀘스트 보상</li>
+      </ul>
+    </div>
+
+    <!-- 레이더 -->
+    <div class="card c-raider">
+      <div class="card-header">
+        <div class="card-icon">◈</div>
+        <div>
+          <div class="card-title">레이더</div>
+          <div class="card-subtitle">레이더 — 성장 & 개인화</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>스킬 트리</strong> <span class="badge badge-purple">45 스킬</span><br>전투력 · 기동성 · 생존력 — 각 5단계</li>
+        <li><strong>레이더 은신처</strong><br>개인 공간 · 레벨 성장 시 인테리어 발전</li>
+        <li><strong>시련</strong> — 특수 도전 과제</li>
+        <li><strong>프로젝트</strong> — 장기 목표 달성 (예: 트로피 진열장 5단계)</li>
+        <li><strong>코덱스</strong> — 완료 퀘스트 · 발견 기록 · 통계</li>
+        <li><strong>커스터마이징</strong> — 의상 · 헤어 · 레이더 토큰으로 해금</li>
+      </ul>
+    </div>
+
+    <!-- 상인 -->
+    <div class="card c-trader">
+      <div class="card-header">
+        <div class="card-icon">◎</div>
+        <div>
+          <div class="card-title">상인</div>
+          <div class="card-subtitle">상인 — 5명의 전문 NPC</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>셀레스테</strong> — 재료/기초 자원 <span class="badge badge-green">각종 씨앗</span></li>
+        <li><strong>티안 원</strong> — 무기 · 탄약 · 모드 <span class="badge badge-gold">코인</span></li>
+        <li><strong>랜스</strong> — 의료 · 실드 · 증강 <span class="badge badge-gold">코인</span></li>
+        <li><strong>아폴로</strong> — 가젯 · 수류탄 · 전술 <span class="badge badge-gold">코인</span></li>
+        <li><strong>샤니</strong> — 탐사/추출 도구 <span class="badge badge-gold">코인</span> <span class="badge badge-orange">평판 점수</span></li>
+        <li><strong>퀘스트</strong> <span class="badge badge-gold">64개+</span><br>1회성 퀘스트 · 스토리 · 장비/경험치 보상</li>
+      </ul>
+    </div>
+
+    <!-- 덱 -->
+    <div class="card c-deck">
+      <div class="card-header">
+        <div class="card-icon">⬡</div>
+        <div>
+          <div class="card-title">덱</div>
+          <div class="card-subtitle">레이더 덱 — 배틀패스형 보상</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>무료 덱</strong> — 게임플레이 아이템 · 유틸리티 팩</li>
+        <li><strong>프리미엄 덱</strong> — 코스메틱 <span class="badge badge-orange">레이더 토큰 필요</span></li>
+        <li><strong>평판 점수 획득</strong><br>지표면 경험치 2,000 당 1개 · 일일 피트</li>
+        <li><strong>소프트 캡</strong> <span class="badge badge-orange">평판 점수 800</span></li>
+        <li><strong>보상 품목</strong><br>의상 · 헤어 · 에모트 · 백팩 · 레이더 토큰</li>
+        <li><strong>꼬꼬 의상</strong> — 전용 코스메틱 포함</li>
+      </ul>
+    </div>
+
+    <!-- 상점 -->
+    <div class="card c-shop">
+      <div class="card-header">
+        <div class="card-icon">◇</div>
+        <div>
+          <div class="card-title">상점</div>
+          <div class="card-subtitle">상점 — 프리미엄 코스메틱</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>의상 번들</strong> — 의상+에모트+백팩 세트 단위 판매</li>
+        <li><strong>프리미엄 레이더 덱</strong> — 상점에서 구매</li>
+        <li><strong>레이더 토큰</strong> <span class="badge badge-pink">프리미엄 통화</span><br>500 / 1,150 / 2,400 / 6,250 / 13,000</li>
+        <li><strong>1,000 토큰 ≈ $10</strong></li>
+        <li><strong>무료 획득</strong><br>덱 완료 (최대 500) · 디럭스 에디션 · 이벤트</li>
+      </ul>
+    </div>
+
+    <!-- 우편함 -->
+    <div class="card c-inbox">
+      <div class="card-header">
+        <div class="card-icon">✉</div>
+        <div>
+          <div class="card-title">우편함</div>
+          <div class="card-subtitle">이벤트 · 개발사 보상 수령</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>레이더 토큰</strong> <span class="badge badge-cyan">이벤트 증정</span><br>이벤트 기간 중 무료 지급 · 로그인 보상</li>
+        <li><strong>코스메틱 아이템</strong><br>출시 기념 · 시즌 한정 의상 · 에모트</li>
+        <li><strong>설계도</strong><br>이벤트 보상 제작도면 · 게임플레이 보상</li>
+        <li><strong>커뮤니티 프로젝트 보상</strong><br>서버 전체 목표 달성 시 지급</li>
+        <li><strong>수령 후 처리</strong> <span class="badge badge-cyan">자동 이동</span><br>수령 즉시 인벤토리로 이동</li>
+      </ul>
+    </div>
+
+    <!-- 인벤토리 -->
+    <div class="card c-inv">
+      <div class="card-header">
+        <div class="card-icon">▣</div>
+        <div>
+          <div class="card-title">인벤토리</div>
+          <div class="card-subtitle">창고 — 아이템 보관 창고</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>시작 용량</strong> <span class="badge-cyan badge">64 슬롯</span> → 최대 <strong>280+슬롯</strong></li>
+        <li><strong>슬롯 확장</strong> <span class="badge badge-gold">코인 구매</span><br>인벤토리 화면에서 코인으로 슬롯 직접 구매 가능<br>첫 구매: +24슬롯 / 5,000 코인 (이후 단계별 비용 증가)</li>
+        <li><strong>영구 확장</strong> <span class="badge badge-cyan">원정 보상</span><br>원정 완료 시 +12슬롯 영구 지급 (초기화 후에도 유지)</li>
+        <li><strong>스택 병합</strong> — 분산 아이템 병합 · 공간 절약</li>
+        <li><strong>자동 전시</strong> — 고가 아이템 → 레이더 은신처 진열대 표시</li>
+        <li><strong>원정 창고 가치</strong><br>창고 가치 + 코인 합산 → 원정 목표치</li>
+        <li><strong>기록장</strong> — 탐사 중 수집한 문서 · 로어 노트 보관<br>발견한 지표면 메모 · NPC 통신 기록 · 세계관 자료 열람</li>
+      </ul>
+    </div>
+
+    <!-- 원정 -->
+    <div class="card c-expedition">
+      <div class="card-header">
+        <div class="card-icon">◎</div>
+        <div>
+          <div class="card-title">원정</div>
+          <div class="card-subtitle">8주 사이클 · 선택적 프레스티지</div>
+        </div>
+      </div>
+      <ul class="sub-list">
+        <li><strong>출발 조건</strong> <span class="badge badge-gold">선택 사항</span><br>8주 사이클 종료 시 약 1주간 출발 창 오픈 — 미출발 시 다음 사이클로 이월</li>
+        <li><strong>출발 시 초기화</strong> <span class="badge badge-gold">전체</span><br>창고 아이템 · 코인 · 레벨 · 스킬 포인트 · 설계도 · 작업장 · 퀘스트</li>
+        <li><strong>출발 시 유지</strong> <span class="badge badge-cyan">영구 보존</span><br>코스메틱 · 레이더 토큰 · 덱 진행도 · 맵 해금 · 코덱스 · 트로피 진열대</li>
+        <li><strong>스킬 포인트 이월</strong> <span class="badge badge-gold">최대 5개</span><br>창고 가치 60만당 1개 · 300만 이상 → 5개 (새 레이더에 선지급)</li>
+        <li><strong>인벤토리 슬롯</strong> <span class="badge badge-gold">영구 +12</span><br>원정 완료마다 영구 확장 지급</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── RESOURCE FLOW ─── -->
+<div class="section-wrap">
+  <div class="section-title">▸ 자원 순환 구조</div>
+</div>
+<div id="resources">
+  <div class="res-grid">
+
+    <div class="res-card">
+      <div class="res-title">
+        <div class="res-dot" style="background:#ffd54f;box-shadow:0 0 6px #ffd54f44;"></div>
+        <span style="color:#ffd54f;">코인</span>
+      </div>
+      <div class="res-row">획득 <span class="arrow-small">▸</span> <span>탐사 중 루팅 · 상인 판매</span></div>
+      <div class="res-row">사용 <span class="arrow-small">▸</span> <span>상인 구매 · 인벤토리 확장</span></div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-title">
+        <div class="res-dot" style="background:#ff6b00;box-shadow:0 0 6px #ff6b0044;"></div>
+        <span style="color:#ff6b00;">평판 점수</span>
+      </div>
+      <div class="res-row">획득 <span class="arrow-small">▸</span> <span>경험치 2,000당 1개 · 일일 피트</span></div>
+      <div class="res-row">사용 <span class="arrow-small">▸</span> <span>덱 보상 해금 · 샤니 상인</span></div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-title">
+        <div class="res-dot" style="background:#ff69b4;box-shadow:0 0 6px #ff69b444;"></div>
+        <span style="color:#ff69b4;">레이더 토큰</span>
+      </div>
+      <div class="res-row">획득 <span class="arrow-small">▸</span> <span>덱 보상 · 현금 구매 · 디럭스 에디션</span></div>
+      <div class="res-row">사용 <span class="arrow-small">▸</span> <span>상점 코스메틱 · 프리미엄 덱</span></div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-title">
+        <div class="res-dot" style="background:#00e676;box-shadow:0 0 6px #00e67644;"></div>
+        <span style="color:#00e676;">각종 씨앗</span>
+      </div>
+      <div class="res-row">획득 <span class="arrow-small">▸</span> <span>탐사 중 루팅</span></div>
+      <div class="res-row">사용 <span class="arrow-small">▸</span> <span>셀레스테 상인 거래</span></div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-title">
+        <div class="res-dot" style="background:#b06bff;box-shadow:0 0 6px #b06bff44;"></div>
+        <span style="color:#b06bff;">스킬 포인트</span>
+      </div>
+      <div class="res-row">획득 <span class="arrow-small">▸</span> <span>레벨업 1개 · 원정 완료 최대 5개</span></div>
+      <div class="res-row">사용 <span class="arrow-small">▸</span> <span>레이더 스킬 트리 업그레이드</span></div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-title">
+        <div class="res-dot" style="background:#00d4ff;box-shadow:0 0 6px #00d4ff44;"></div>
+        <span style="color:#00d4ff;">경험치</span>
+      </div>
+      <div class="res-row">획득 <span class="arrow-small">▸</span> <span>탐사 전투 · 루팅 · 퀘스트 완료</span></div>
+      <div class="res-row">사용 <span class="arrow-small">▸</span> <span>레벨업 → 스킬 포인트 · 평판 점수 생성</span></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>아크 레이더스 · 스페란자 허브 · 순환 컨텐츠 흐름도</footer>
+
+</body>
+</html>
